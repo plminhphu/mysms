@@ -1,15 +1,15 @@
 // import 'package:background_sms/background_sms.dart';
 import 'package:flutter/material.dart';
-// import 'package:workmanager/workmanager.dart';
+import 'package:workmanager/workmanager.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
-  // Workmanager().registerPeriodicTask(
-  //   "task-identifier",
-  //   "simpleTask",
-  //   frequency: const Duration(seconds: 1),
-  // );
+  Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
+  Workmanager().registerPeriodicTask(
+    "task-identifier",
+    "simpleTask",
+    frequency: const Duration(seconds: 1),
+  );
   // AwesomeNotifications().initialize(
   //     // set the icon to null if you want to use the default app icon
   //     'resource://drawable/res_app_icon',
@@ -31,13 +31,13 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-// @pragma('vm:entry-point')
-// void callbackDispatcher() {
-//   Workmanager().executeTask((task, inputData) {
-//     print("Native called background task: $task");
-//     return Future.value(true);
-//   });
-// }
+@pragma('vm:entry-point')
+void callbackDispatcher() {
+  Workmanager().executeTask((task, inputData) {
+    print("Native called background task: $task");
+    return Future.value(true);
+  });
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -88,15 +88,15 @@ class _MyHomePageState extends State<MyHomePage> {
     // }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    // AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
-    //   if (!isAllowed) {
-    //     AwesomeNotifications().requestPermissionToSendNotifications();
-    //   }
-    // });
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   // AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+  //   //   if (!isAllowed) {
+  //   //     AwesomeNotifications().requestPermissionToSendNotifications();
+  //   //   }
+  //   // });
+  // }
 
   @override
   Widget build(BuildContext context) {
