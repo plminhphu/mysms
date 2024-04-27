@@ -1,26 +1,63 @@
-import 'package:background_sms/background_sms.dart';
+// import 'package:background_sms/background_sms.dart';
 import 'package:flutter/material.dart';
+// import 'package:workmanager/workmanager.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
+  // Workmanager().registerPeriodicTask(
+  //   "task-identifier",
+  //   "simpleTask",
+  //   frequency: const Duration(seconds: 1),
+  // );
+  // AwesomeNotifications().initialize(
+  //     // set the icon to null if you want to use the default app icon
+  //     'resource://drawable/res_app_icon',
+  //     [
+  //       NotificationChannel(
+  //           channelGroupKey: 'basic_channel_group',
+  //           channelKey: 'basic_channel',
+  //           channelName: 'Basic notifications',
+  //           channelDescription: 'Notification channel for basic tests',
+  //           defaultColor: const Color.fromARGB(255, 36, 30, 216),
+  //           ledColor: Colors.white)
+  //     ],
+  //     channelGroups: [
+  //       NotificationChannelGroup(
+  //           channelGroupKey: 'basic_channel_group',
+  //           channelGroupName: 'Basic group')
+  //     ],
+  //     debug: true);
   runApp(const MyApp());
 }
+
+// @pragma('vm:entry-point')
+// void callbackDispatcher() {
+//   Workmanager().executeTask((task, inputData) {
+//     print("Native called background task: $task");
+//     return Future.value(true);
+//   });
+// }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'PL Minh Phú SMS',
       theme: ThemeData(
-        useMaterial3: true,
+        useMaterial3: false,
       ),
       debugShowCheckedModeBanner: false,
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'PL Minh Phú SMS'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
+
   const MyHomePage({super.key, required this.title});
   final String title;
 
@@ -30,13 +67,35 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   Future _sendSMS(String message, List<String> recipents) async {
-    SmsStatus result = await BackgroundSms.sendMessage(
-        phoneNumber: "84329886884", message: "Message 1234");
-    if (result == SmsStatus.sent) {
-      print("Sent");
-    } else {
-      print("Failed");
-    }
+    // AwesomeNotifications().createNotification(
+    //     content: NotificationContent(
+    //   id: 10,
+    //   channelKey: 'basic_channel',
+    //   actionType: ActionType.Default,
+    //   title: 'Hello World!',
+    //   body: 'This is my first notification!',
+    //   wakeUpScreen: true,
+    //   badge: 1,
+    // ));
+    // for (var recipent in recipents) {
+    //   SmsStatus result = await BackgroundSms.sendMessage(
+    //       phoneNumber: recipent, message: message);
+    //   if (result == SmsStatus.sent) {
+    //     print("Sent");
+    //   } else {
+    //     print("Failed");
+    //   }
+    // }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+    //   if (!isAllowed) {
+    //     AwesomeNotifications().requestPermissionToSendNotifications();
+    //   }
+    // });
   }
 
   @override
@@ -61,8 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
           List<String> recipents = ["0329886884"];
           await _sendSMS(message, recipents);
         },
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.question_mark_outlined),
       ),
     );
   }
