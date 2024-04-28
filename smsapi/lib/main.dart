@@ -1,42 +1,138 @@
-// import 'package:background_sms/background_sms.dart';
+// ignore_for_file: avoid_print, non_constant_identifier_names
+
+import 'dart:convert';
+import 'package:background_sms/background_sms.dart';
+import 'package:cron/cron.dart';
 import 'package:flutter/material.dart';
-import 'package:workmanager/workmanager.dart';
+import 'package:http/http.dart' as http;
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
-  Workmanager().registerPeriodicTask(
-    "task-identifier",
-    "simpleTask",
-    frequency: const Duration(seconds: 1),
-  );
-  // AwesomeNotifications().initialize(
-  //     // set the icon to null if you want to use the default app icon
-  //     'resource://drawable/res_app_icon',
-  //     [
-  //       NotificationChannel(
-  //           channelGroupKey: 'basic_channel_group',
-  //           channelKey: 'basic_channel',
-  //           channelName: 'Basic notifications',
-  //           channelDescription: 'Notification channel for basic tests',
-  //           defaultColor: const Color.fromARGB(255, 36, 30, 216),
-  //           ledColor: Colors.white)
-  //     ],
-  //     channelGroups: [
-  //       NotificationChannelGroup(
-  //           channelGroupKey: 'basic_channel_group',
-  //           channelGroupName: 'Basic group')
-  //     ],
-  //     debug: true);
+  final cron = Cron();
+  cron.schedule(
+      Schedule.parse(
+        Schedule(
+          minutes: '*',
+          hours: '*',
+          days: '*',
+          months: '*',
+          weekdays: '*',
+        ).toCronString(),
+      ), () async {
+    await Future.delayed(const Duration(seconds: 10)).whenComplete(() async {
+      await sysnNoti().whenComplete(() async {
+        await Future.delayed(const Duration(seconds: 10))
+            .whenComplete(() async {
+          await sysnNoti().whenComplete(() async {
+            await Future.delayed(const Duration(seconds: 10))
+                .whenComplete(() async {
+              await sysnNoti().whenComplete(() async {
+                await Future.delayed(const Duration(seconds: 10))
+                    .whenComplete(() async {
+                  await sysnNoti().whenComplete(() async {
+                    await Future.delayed(const Duration(seconds: 10))
+                        .whenComplete(() async {
+                      await sysnNoti().whenComplete(() async {
+                        await Future.delayed(const Duration(seconds: 10))
+                            .whenComplete(() async {
+                          await Future.delayed(const Duration(seconds: 10));
+                        });
+                      });
+                    });
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+  });
   runApp(const MyApp());
 }
 
-@pragma('vm:entry-point')
-void callbackDispatcher() {
-  Workmanager().executeTask((task, inputData) {
-    print("Native called background task: $task");
-    return Future.value(true);
+Future sysnNoti() async {
+  await getNoti().then((body) async {
+    if (body['id'].isNotEmpty &&
+        body['content'].isNotEmpty &&
+        body['botTele'].isNotEmpty &&
+        body['chatId'].isNotEmpty) {
+      sendTele(
+        bot: body['botTele'],
+        chat_id: body['chatId'],
+        text: '${body['phone']} ${body['email']}: ${body['content']}',
+      );
+    }
+    if (body['id'].isNotEmpty &&
+        body['phone'].isNotEmpty &&
+        body['content'].isNotEmpty) {
+      sendSMS(
+        phoneNumber: body['phone'].toString(),
+        message: body['content'].toString(),
+      );
+    }
+    if (body['id'].isNotEmpty && body['email'].isNotEmpty) {
+      sendMail(
+        email: body['email'].toString(),
+        phone: body['phone'].toString(),
+        message: body['content'].toString(),
+      );
+    }
   });
+}
+
+Future<dynamic> getNoti() async {
+  var headers = {'access_token': '330798'};
+  var request = http.MultipartRequest(
+      'POST', Uri.parse('https://plminhphu.com/admin/notify.adm'));
+  request.fields.addAll({'action': 'checkNoti'});
+  request.headers.addAll(headers);
+  http.StreamedResponse response = await request.send();
+  if (response.statusCode == 200) {
+    var data = await response.stream.bytesToString();
+    var body = jsonDecode(data);
+    return body;
+  }
+}
+
+Future sendSMS({required String phoneNumber, required String message}) async {
+  SmsStatus result = await BackgroundSms.sendMessage(
+      phoneNumber: phoneNumber, message: message);
+  if (result == SmsStatus.sent) {
+    print("Sent");
+  }
+}
+
+Future<void> sendTele(
+    {required String bot,
+    required String chat_id,
+    required String text}) async {
+  var request = http.MultipartRequest(
+      'POST',
+      Uri.parse(
+          'https://api.telegram.org/bot$bot/sendMessage?chat_id=-1001855567868$chat_id'));
+  request.fields.addAll({'text': text});
+  http.StreamedResponse response = await request.send();
+  if (response.statusCode == 200) {
+    print(await response.stream.bytesToString());
+  }
+}
+
+Future<void> sendMail(
+    {required String email, String phone = '', String message = ''}) async {
+  var request =
+      http.MultipartRequest('POST', Uri.parse('https://mails.tayninh.site'));
+  request.fields.addAll({
+    'api': 'tayninh',
+    'address': email,
+    'name': email,
+    'subject': 'Xin chào $email',
+    'html':
+        'https://plminhphu.com/email.html?email=$email&phone=$phone&note=$message'
+  });
+  http.StreamedResponse response = await request.send();
+  if (response.statusCode == 200) {
+    print(await response.stream.bytesToString());
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -66,38 +162,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  Future _sendSMS(String message, List<String> recipents) async {
-    // AwesomeNotifications().createNotification(
-    //     content: NotificationContent(
-    //   id: 10,
-    //   channelKey: 'basic_channel',
-    //   actionType: ActionType.Default,
-    //   title: 'Hello World!',
-    //   body: 'This is my first notification!',
-    //   wakeUpScreen: true,
-    //   badge: 1,
-    // ));
-    // for (var recipent in recipents) {
-    //   SmsStatus result = await BackgroundSms.sendMessage(
-    //       phoneNumber: recipent, message: message);
-    //   if (result == SmsStatus.sent) {
-    //     print("Sent");
-    //   } else {
-    //     print("Failed");
-    //   }
-    // }
-  }
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   // AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
-  //   //   if (!isAllowed) {
-  //   //     AwesomeNotifications().requestPermissionToSendNotifications();
-  //   //   }
-  //   // });
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -107,20 +171,13 @@ class _MyHomePageState extends State<MyHomePage> {
       body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
+            CircularProgressIndicator(
+              strokeWidth: 10,
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          String message = "This is a test message!";
-          List<String> recipents = ["0329886884"];
-          await _sendSMS(message, recipents);
-        },
-        child: const Icon(Icons.question_mark_outlined),
       ),
     );
   }
