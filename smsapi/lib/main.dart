@@ -18,23 +18,44 @@ Future<void> main() async {
           weekdays: '*',
         ).toCronString(),
       ), () async {
-    await Future.delayed(const Duration(seconds: 10)).whenComplete(() async {
+    await Future.delayed(const Duration(seconds: 5)).whenComplete(() async {
       await sysnNoti().whenComplete(() async {
-        await Future.delayed(const Duration(seconds: 10))
-            .whenComplete(() async {
+        await Future.delayed(const Duration(seconds: 5)).whenComplete(() async {
           await sysnNoti().whenComplete(() async {
-            await Future.delayed(const Duration(seconds: 10))
+            await Future.delayed(const Duration(seconds: 5))
                 .whenComplete(() async {
               await sysnNoti().whenComplete(() async {
-                await Future.delayed(const Duration(seconds: 10))
+                await Future.delayed(const Duration(seconds: 5))
                     .whenComplete(() async {
                   await sysnNoti().whenComplete(() async {
-                    await Future.delayed(const Duration(seconds: 10))
+                    await Future.delayed(const Duration(seconds: 5))
                         .whenComplete(() async {
                       await sysnNoti().whenComplete(() async {
-                        await Future.delayed(const Duration(seconds: 10))
+                        await Future.delayed(const Duration(seconds: 5))
                             .whenComplete(() async {
-                          await Future.delayed(const Duration(seconds: 10));
+                          await sysnNoti().whenComplete(() async {
+                            await Future.delayed(const Duration(seconds: 5))
+                                .whenComplete(() async {
+                              await sysnNoti().whenComplete(() async {
+                                await Future.delayed(const Duration(seconds: 5))
+                                    .whenComplete(() async {
+                                  await sysnNoti().whenComplete(() async {
+                                    await Future.delayed(
+                                            const Duration(seconds: 5))
+                                        .whenComplete(() async {
+                                      await sysnNoti().whenComplete(() async {
+                                        await Future.delayed(
+                                                const Duration(seconds: 5))
+                                            .whenComplete(() async {
+                                          await sysnNoti();
+                                        });
+                                      });
+                                    });
+                                  });
+                                });
+                              });
+                            });
+                          });
                         });
                       });
                     });
