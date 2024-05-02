@@ -130,7 +130,7 @@ Future<void> sendTele(
   var request = http.MultipartRequest(
       'POST',
       Uri.parse(
-          'https://api.telegram.org/bot$bot/sendMessage?chat_id=-1001855567868$chat_id'));
+          'https://api.telegram.org/bot$bot/sendMessage?chat_id=$chat_id'));
   request.fields.addAll({'text': text});
   http.StreamedResponse response = await request.send();
   if (response.statusCode == 200) {
