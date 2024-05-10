@@ -23,4 +23,9 @@ class Notify extends Database
     $sql = "SELECT * FROM `tbl_notify` ORDER BY `notify_created` ASC LIMIT 1000";
     return $this->select($sql) ?? null;
   }
+  public function getNotifyByID($id)
+  {
+    $sql = "SELECT * FROM `tbl_notify` WHERE `notify_id`='$id' ORDER BY `notify_created` ASC LIMIT 1000";
+    return $this->select($sql)[0] ?? null;
+  }
 }

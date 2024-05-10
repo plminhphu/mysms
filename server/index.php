@@ -95,13 +95,15 @@ if($ACCESS_TOKEN==DEFAULT_ACCESS_TOKEN){
       $sttNotify=(@$_POST['sttNotify']=='1')?'2':'-1';
       include_once("m_notify.php");
       $Notify = new Notify();
-      $res=@$Notify->setSTTNotify($idNotify,$sttNotify,time());
-      if ($res && $sttNotify=='2') {
-        include_once("m_bot.php");
-        $Mbot = new Mbot();
-        @$Mbot->addNotifyBot(@$BOT_PHONE) ?? null;
+      $notify=@$Notify->getNotifyByID($idNotify);
+      if ($notify['notify_id'] && $notify['notify_stt']!=$sttNotify) {
+        $res=@$Notify->setSTTNotify($idNotify,$sttNotify,time());
+        if ($res && $sttNotify=='2') {
+          include_once("m_bot.php");
+          $Mbot = new Mbot();
+          @$Mbot->addNotifyBot(@$BOT_PHONE) ?? null;
+        } 
       } 
-      
     } 
     
     
