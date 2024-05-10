@@ -1,9 +1,12 @@
-// ignore_for_file: avoid_print, non_constant_identifier_names
+// ignore_for_file: avoid_print, non_constant_identifier_names, unrelated_type_equality_checks
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:smsadmin/controller.dart';
+import 'package:smsadmin/data_bot.dart';
+import 'package:smsadmin/data_noti.dart';
 
 Future<void> main() async {
   await GetStorage.init();
@@ -19,6 +22,7 @@ class MyApp extends StatelessWidget {
       title: 'SMS Admin',
       theme: ThemeData(
         useMaterial3: false,
+        colorScheme: const ColorScheme.light(primary: Colors.black),
       ),
       debugShowCheckedModeBanner: false,
       home: const MyHomePage(),
@@ -39,22 +43,12 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   Controller controller = Get.find(tag: 'Controller');
   TextEditingController ctrlTextServer = TextEditingController();
-  TextEditingController ctrlTextPhone = TextEditingController();
   TextEditingController ctrlTextToken = TextEditingController();
-  String dropdownValue = '';
+
   @override
   void initState() {
     super.initState();
-    controller.sysnNoti();
-    initLoad();
-  }
-
-  Future initLoad() async {
-    int numPM = (60 / controller.timePM.value).floor();
-    for (var i = 0; i < numPM; i++) {
-      await Future.delayed(Duration(seconds: controller.timePM.value));
-      await controller.sysnNoti();
-    }
+    controller.checkServer();
   }
 
   @override
@@ -89,42 +83,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CircularProgressIndicator(
-                        strokeWidth: 3,
-                        color: controller.stt.value ? Colors.green : Colors.red,
-                      ),
-                      const SizedBox(width: 20),
-                      controller.stt.value
-                          ? const Text(
-                              'Đã kết nối',
-                              style: TextStyle(
-                                fontSize: 25,
-                                color: Colors.green,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            )
-                          : const Text(
-                              'Kết nối thất bại',
-                              style: TextStyle(
-                                fontSize: 25,
-                                color: Colors.red,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                      const SizedBox(width: 20),
-                      Text(
-                        controller.sttCode.value.toString(),
-                        style: const TextStyle(
-                          fontSize: 25,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
                   const SizedBox(height: 15),
                   TextField(
                     controller: ctrlTextServer,
@@ -147,16 +105,98 @@ class _MyHomePageState extends State<MyHomePage> {
                       labelText: 'Token:',
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 15),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStatePropertyAll(
+                              controller.stt.value ? Colors.green : Colors.red),
+                        ),
+                        onPressed: () {
+                          if (controller.stt.value) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const DataBotPage()),
+                            );
+                          } else {
+                            showCupertinoDialog(
+                              context: context,
+                              builder: (context) {
+                                return CupertinoAlertDialog(
+                                  title: const Text(
+                                    'Ồ, có lỗi!!!',
+                                  ),
+                                  content: const Text(
+                                    'Bạn không có quyền xem dữ liệu rồi! Vui lòng cấu hình lại server rồi tính tiếp.',
+                                  ),
+                                  actions: [
+                                    CupertinoButton(
+                                      child: const Text('Đóng'),
+                                      onPressed: () {
+                                        Navigator.of(context,
+                                                rootNavigator: true)
+                                            .pop("Discard");
+                                      },
+                                    )
+                                  ],
+                                );
+                              },
+                            );
+                          }
+                        },
+                        child: const Text('Danh sách thiết bị'),
+                      ),
+                      ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStatePropertyAll(
+                              controller.stt.value ? Colors.green : Colors.red),
+                        ),
+                        onPressed: () {
+                          if (controller.stt.value) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const DataNotiPage()),
+                            );
+                          } else {
+                            showCupertinoDialog(
+                              context: context,
+                              builder: (context) {
+                                return CupertinoAlertDialog(
+                                  title: const Text(
+                                    'Ồ, có lỗi!!!',
+                                  ),
+                                  content: const Text(
+                                    'Bạn không có quyền xem dữ liệu rồi! Vui lòng cấu hình lại server rồi tính tiếp.',
+                                  ),
+                                  actions: [
+                                    CupertinoButton(
+                                      child: const Text('Đóng'),
+                                      onPressed: () {
+                                        Navigator.of(context,
+                                                rootNavigator: true)
+                                            .pop("Discard");
+                                      },
+                                    )
+                                  ],
+                                );
+                              },
+                            );
+                          }
+                        },
+                        child: const Text('Danh sách thông báo'),
+                      ),
+                    ],
+                  )
                 ],
               ),
             ),
           ),
         );
       }),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {},
-      ),
     );
   }
 }

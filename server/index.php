@@ -112,13 +112,21 @@ if($ACCESS_TOKEN==DEFAULT_ACCESS_TOKEN){
     include_once("m_bot.php");
     $Mbot = new Mbot();
     $stdRes->data=@$Mbot->getALLBot();
+    $stdRes->now=time();
     
     
+
+  }else if(@$_POST['action']=='checkServer'){
+    header("HTTP/1.1 200");
+    $stdRes->mess='server connected';
 
   }else{
     header("HTTP/1.1 200");
     $stdRes->mess='not method';
   }
+}else{
+  header("HTTP/1.1 500");
+  $stdRes->mess='server connect fail';
 }
 
 //'Viettel,Mobiphone,Vinaphone,Vietnammobille,Gmobille'
