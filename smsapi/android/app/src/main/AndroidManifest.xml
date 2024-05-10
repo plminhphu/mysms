@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <application
-        android:label="SMS API"
+        android:label="SMS MyBot"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
