@@ -60,8 +60,8 @@ if($ACCESS_TOKEN==DEFAULT_ACCESS_TOKEN){
     // $stdRes->botTele=OS_TELE_TOKEN;
     // $stdRes->chatId=OS_TELE_ID_ROOM;
     $stdRes->netList=DEFAULT_NET_LIST;
-    $BOT_PHONE= @$_SERVER['HTTP_BOT_PHONE']??null;
-    $BOT_NET= @$_SERVER['HTTP_BOT_NET']??null;
+    $BOT_PHONE = @$_SERVER['HTTP_BOT_PHONE']??null;
+    $BOT_NET = @$_SERVER['HTTP_BOT_NET']??null;
     include_once("m_bot.php");
     $Mbot = new Mbot();
     $mybot = @$Mbot->getFirstBot(@$BOT_PHONE) ?? null;
@@ -89,7 +89,7 @@ if($ACCESS_TOKEN==DEFAULT_ACCESS_TOKEN){
 
     
   }else if(@$_POST['action']=='setNotify'){
-    $BOT_PHONE= @$_SERVER['HTTP_BOT_PHONE']??null;
+    $BOT_PHONE = @$_SERVER['HTTP_BOT_PHONE']??null;
     $idNotify=@$_POST['idNotify'];
     $sttNotify=(@$_POST['sttNotify']=='1')?'2':'-1';
     include_once("m_notify.php");
@@ -98,6 +98,21 @@ if($ACCESS_TOKEN==DEFAULT_ACCESS_TOKEN){
     include_once("m_bot.php");
     $Mbot = new Mbot();
     @$Mbot->addNotifyBot(@$BOT_PHONE) ?? null;
+    
+
+    
+  }else if(@$_POST['action']=='getALLNotify'){
+    include_once("m_notify.php");
+    $Notify = new Notify();
+    $stdRes->data=@$Notify->getALLNotify();
+    
+
+    
+  }else if(@$_POST['action']=='getALLBot'){
+    include_once("m_bot.php");
+    $Mbot = new Mbot();
+    $stdRes->data=@$Mbot->getALLBot();
+    
     
 
   }else{

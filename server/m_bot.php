@@ -31,4 +31,9 @@ class MBot extends Database
     $sql = "UPDATE `tbl_bot` SET `bot_sended`=(`bot_sended` + 1),`bot_loged`='$time',`bot_updated`='$time' WHERE `bot_phone`='$phone'";
     return $this->query($sql) ?? null;
   }
+  public function getALLBot()
+  {
+    $sql = "SELECT * FROM `tbl_bot` ORDER BY `bot_created` ASC";
+    return $this->select($sql) ?? null;
+  }
 }

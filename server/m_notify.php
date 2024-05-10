@@ -18,4 +18,9 @@ class Notify extends Database
     $sql = "UPDATE `tbl_notify` SET `notify_stt`='$stt',`notify_updated`='$time' WHERE `notify_id`=$id";
     return $this->query($sql) ?? null;
   }
+  public function getALLNotify()
+  {
+    $sql = "SELECT * FROM `tbl_notify` ORDER BY `notify_created` ASC LIMIT 1000";
+    return $this->select($sql) ?? null;
+  }
 }
