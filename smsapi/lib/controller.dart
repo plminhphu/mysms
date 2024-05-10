@@ -7,7 +7,7 @@ import 'dart:convert';
 import 'package:background_sms/background_sms.dart';
 
 class Controller extends GetConnect {
-  RxInt timePM = 5.obs;
+  RxInt timePM = 3.obs;
   RxBool stt = false.obs;
   RxInt sttCode = 0.obs;
   RxString server = ''.obs;
@@ -18,7 +18,6 @@ class Controller extends GetConnect {
   RxList<String> netList = ['All', 'Stop'].obs;
 
   Future sysnNoti() async {
-    sttCode.value++;
     await checkServer();
     await getNoti().then((body) async {
       if (body == null) {

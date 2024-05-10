@@ -89,15 +89,21 @@ if($ACCESS_TOKEN==DEFAULT_ACCESS_TOKEN){
 
     
   }else if(@$_POST['action']=='setNotify'){
-    $BOT_PHONE = @$_SERVER['HTTP_BOT_PHONE']??null;
-    $idNotify=@$_POST['idNotify'];
-    $sttNotify=(@$_POST['sttNotify']=='1')?'2':'-1';
-    include_once("m_notify.php");
-    $Notify = new Notify();
-    @$Notify->setSTTNotify($idNotify,$sttNotify,time());
-    include_once("m_bot.php");
-    $Mbot = new Mbot();
-    @$Mbot->addNotifyBot(@$BOT_PHONE) ?? null;
+    if (@$_POST['sttNotify']=='1'||@$_POST['sttNotify']=='0') {
+      $BOT_PHONE = @$_SERVER['HTTP_BOT_PHONE']??null;
+      $idNotify=@$_POST['idNotify'];
+      $sttNotify=(@$_POST['sttNotify']=='1')?'2':'-1';
+      include_once("m_notify.php");
+      $Notify = new Notify();
+      $res=@$Notify->setSTTNotify($idNotify,$sttNotify,time());
+      if ($res && $sttNotify=='2') {
+        include_once("m_bot.php");
+        $Mbot = new Mbot();
+        @$Mbot->addNotifyBot(@$BOT_PHONE) ?? null;
+      } 
+      
+    } 
+    
     
 
     
