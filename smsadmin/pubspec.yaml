@@ -1,0 +1,33 @@
+name: smsadmin
+description: "SMS Admin"
+publish_to: 'none'
+
+version: 1.0.1+101
+
+environment:
+  sdk: '>=3.3.3 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.6
+  http: ^1.2.1
+  get: ^4.6.6
+  get_storage: ^2.1.1
+  cron: ^0.6.0
+  data_table_2: ^2.5.12
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  flutter_launcher_icons: ^0.13.1
+flutter_icons:
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  image_path: "assets/logo.png" 
+
+flutter:
+
+  uses-material-design: true
