@@ -14,6 +14,8 @@ dependencies:
   background_sms: ^0.0.4
   http: ^1.2.1
   cron: ^0.6.0
+  get: ^4.6.6
+  get_storage: ^2.1.1
 
 dev_dependencies:
   flutter_test:
