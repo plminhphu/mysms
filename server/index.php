@@ -48,8 +48,9 @@ if($ACCESS_TOKEN==DEFAULT_ACCESS_TOKEN){
       $stdRes->phone=$mybot['bot_phone'];
       include_once("m_notify.php");
       $Notify = new Notify();
-      $res = @$Notify->createNotify($phone,$content,$mybot['bot_phone']) ?? null;
-      $stdRes->stt=$res?'success':'error';
+      $res = @$Notify->createNotify($phone,$content,$mybot['bot_phone']) ?? false;
+      $res2 =$res? @$Mbot->updateBot($mybot['bot_phone']):false;
+      $stdRes->stt=$res2?'success':'error';
     }else{
       $stdRes->stt='null bot';
     }
@@ -69,7 +70,7 @@ if($ACCESS_TOKEN==DEFAULT_ACCESS_TOKEN){
     if (strlen($mybot['bot_phone'])>=10) {
       @$Mbot->loginBot(@$BOT_PHONE,$BOT_NET) ?? null;
       $stdRes->net=$mybot['bot_net'];
-    } else {
+    } else if (strlen($BOT_PHONE)>=10){
       @$Mbot->createBot(@$BOT_PHONE,$BOT_NET) ?? null;
       $stdRes->net=$BOT_NET;
     }
@@ -122,6 +123,26 @@ if($ACCESS_TOKEN==DEFAULT_ACCESS_TOKEN){
     $stdRes->data=@$Mbot->getALLBot();
     $stdRes->now=time();
     
+    
+
+    
+  }else if(@$_POST['action']=='getLastNotify'){
+    include_once("m_notify.php");
+    $Notify = new Notify();
+    $data=@$Notify->getLastNotify();
+    if (@$data['notify_id']) {
+      header("HTTP/1.1 200");
+      $stdRes->notify_id=$data['notify_id'];
+      $stdRes->notify_bot=$data['notify_bot'];
+      $stdRes->notify_stt=$data['notify_stt'];
+      $stdRes->notify_phone=$data['notify_phone'];
+      $stdRes->notify_content=$data['notify_content'];
+      @$Notify->setLastNotify(@$data['notify_id']);
+    } else {
+      header("HTTP/1.1 500");
+    }
+    
+
     
 
   }else if(@$_POST['action']=='checkServer'){

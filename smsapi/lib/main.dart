@@ -16,7 +16,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
   FlutterLocalNotificationsPlugin flnp = FlutterLocalNotificationsPlugin();
-  var android = const AndroidInitializationSettings('@mipmap/ic_launcher');
+  var android = const AndroidInitializationSettings('logo');
   var settings = InitializationSettings(android: android);
   await flnp.initialize(settings);
   await Workmanager().initialize(callbackDispatcher, isInDebugMode: false);

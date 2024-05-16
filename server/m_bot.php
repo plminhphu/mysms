@@ -9,14 +9,19 @@ class MBot extends Database
   }
   public function getLastBot($net)
   {
-    $time=time()-30;
-    $sql = "SELECT * FROM `tbl_bot` WHERE (`bot_net` = '$net' OR `bot_net` = 'All') AND `bot_loged` > $time ORDER BY `bot_updated` ASC";
+    $sql = "SELECT * FROM `tbl_bot` WHERE (`bot_net` = '$net' OR `bot_net` = 'All') ORDER BY `bot_updated` ASC";
     return $this->select($sql)[0] ?? null;
   }
   public function createBot($phone,$net)
   {
     $time=time();
     $sql = "INSERT INTO `tbl_bot`(`bot_phone`, `bot_net`, `bot_loged`, `bot_sended`, `bot_created`, `bot_updated`) VALUES ('$phone','$net','$time','0','$time','$time')";
+    return $this->query($sql) ?? null;
+  }
+  public function updateBot($phone)
+  {
+    $time=time();
+    $sql = "UPDATE `tbl_bot` SET `bot_updated`='$time' WHERE `bot_phone`='$phone'";
     return $this->query($sql) ?? null;
   }
   public function loginBot($phone,$net)

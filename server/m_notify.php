@@ -28,4 +28,14 @@ class Notify extends Database
     $sql = "SELECT * FROM `tbl_notify` WHERE `notify_id`='$id' ORDER BY `notify_created` ASC LIMIT 1000";
     return $this->select($sql)[0] ?? null;
   }
+  public function getLastNotify()
+  {
+    $sql = "SELECT * FROM `tbl_notify` WHERE `notify_stt_adm`='0' ORDER BY `notify_id` DESC LIMIT 1";
+    return $this->select($sql)[0] ?? null;
+  }
+  public function setLastNotify($id)
+  {
+    $sql = "UPDATE `tbl_notify` SET `notify_stt_adm`='1' WHERE `notify_id`=$id";
+    return $this->query($sql) ?? null;
+  }
 }
