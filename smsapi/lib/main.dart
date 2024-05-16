@@ -1,14 +1,26 @@
 // ignore_for_file: avoid_print, non_constant_identifier_names
 
+import 'dart:convert';
 import 'package:background_sms/background_sms.dart';
 import 'package:cron/cron.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:smsapi/controller.dart';
+import 'package:workmanager/workmanager.dart';
+import 'package:http/http.dart' as http;
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
+  FlutterLocalNotificationsPlugin flnp = FlutterLocalNotificationsPlugin();
+  var android = const AndroidInitializationSettings('@mipmap/ic_launcher');
+  var settings = InitializationSettings(android: android);
+  await flnp.initialize(settings);
+  await Workmanager().initialize(callbackDispatcher, isInDebugMode: false);
+  await Workmanager().cancelAll();
   Controller controller = Get.put(Controller(), tag: 'Controller');
   final cron = Cron();
   cron.schedule(
@@ -31,17 +43,95 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
+@pragma('vm:entry-point')
+void callbackDispatcher() {
+  Workmanager().executeTask((task, inputData) async {
+    await GetStorage.init();
+    GetStorage box = GetStorage();
+    String sv = box.read('server').toString();
+    var request = http.MultipartRequest('POST', Uri.parse('https://$sv'));
+    request.headers.addAll({
+      'access_token': box.read('token').toString(),
+      'bot_phone': box.read('phone').toString(),
+      'bot_net': box.read('net').toString(),
+    });
+    request.fields.addAll({'action': 'checkNotify'});
+    http.StreamedResponse response = await request.send();
+    var data = await response.stream.bytesToString();
+    var body = jsonDecode(data);
+    if (response.statusCode == 200) {
+      if (body['id'].toString().isNotEmpty &&
+          body['phone'].toString().isNotEmpty &&
+          body['content'].toString().isNotEmpty) {
+        await BackgroundSms.isSupportCustomSim.then((isSim) async {
+          if (isSim ?? false) {
+            SmsStatus result = await BackgroundSms.sendMessage(
+              phoneNumber: body['phone'].toString(),
+              message: body['content'].toString(),
+              simSlot: 1,
+            );
+            bool smsStatus = false;
+            if (result == SmsStatus.sent) {
+              smsStatus = true;
+            }
+            GetStorage box = GetStorage();
+            var headers = {
+              'access_token': box.read('token').toString(),
+              'bot_phone': box.read('phone').toString(),
+              'bot_net': box.read('net').toString(),
+            };
+            var request =
+                http.MultipartRequest('POST', Uri.parse('https://$sv'));
+            request.headers.addAll(headers);
+            request.fields.addAll({
+              'action': 'setNotify',
+              'idNotify': body['id'].toString(),
+              'sttNotify': smsStatus ? '1' : '0',
+            });
+            await request.send().whenComplete(() async {
+              await FlutterLocalNotificationsPlugin().show(
+                int.parse(body['id'].toString()),
+                '${smsStatus ? 'Đã' : 'Chưa'} gửi tin nhắn đến ${box.read('phone')}',
+                'Nội dung: ${body['content']}',
+                const NotificationDetails(
+                  android: AndroidNotificationDetails(
+                    'sms-notify',
+                    'SmsNotify',
+                    channelDescription: 'SMS sNotify',
+                    importance: Importance.max,
+                    priority: Priority.high,
+                    playSound: true,
+                  ),
+                ),
+              );
+            });
+          }
+        });
+      }
+    }
+    return Future.value(true);
+  });
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'SMS MyBot',
       theme: ThemeData(
         useMaterial3: false,
       ),
       debugShowCheckedModeBanner: false,
       home: const MyHomePage(),
+      onInit: () async {
+        if (!GetPlatform.isWeb) {
+          await [
+            Permission.sms,
+            Permission.backgroundRefresh,
+          ].request();
+        }
+      },
     );
   }
 }
@@ -159,7 +249,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   DropdownButton<String>(
                     value: dropdownValue,
                     onChanged: (String? value) {
-                      controller.setNet(value!);
+                      controller.setNet(value!).whenComplete(() {
+                        MySnackbar.show(
+                          title: 'Đã cập nhật',
+                          message: 'Đã cập nhật phương thức',
+                        );
+                      });
                       setState(() {
                         dropdownValue = value;
                       });
@@ -197,34 +292,52 @@ class _MyHomePageState extends State<MyHomePage> {
                   TextField(
                     controller: ctrlTextServer,
                     onSubmitted: (val) {
-                      controller.setServer(val);
+                      controller.setServer(val).whenComplete(() {
+                        MySnackbar.show(
+                          title: 'Đã cập nhật',
+                          message: 'Đã cập nhật địa chỉ server',
+                        );
+                      });
                     },
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
-                      labelText: 'Server:',
+                      labelText: 'Máy chủ:',
                     ),
+                    keyboardType: TextInputType.text,
                   ),
                   const SizedBox(height: 15),
                   TextField(
                     controller: ctrlTextToken,
                     onSubmitted: (val) {
-                      controller.setToken(val);
+                      controller.setToken(val).whenComplete(() {
+                        MySnackbar.show(
+                          title: 'Đã cập nhật',
+                          message: 'Đã cập nhật mã token mới',
+                        );
+                      });
                     },
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
-                      labelText: 'Token:',
+                      labelText: 'Mã token:',
                     ),
+                    keyboardType: TextInputType.text,
                   ),
                   const SizedBox(height: 15),
                   TextField(
                     controller: ctrlTextPhone,
                     onSubmitted: (val) {
-                      controller.setPhone(val);
+                      controller.setPhone(val).whenComplete(() {
+                        MySnackbar.show(
+                          title: 'Đã cập nhật',
+                          message: 'Đã cập nhật số điện thoại',
+                        );
+                      });
                     },
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
-                      labelText: 'Phone:',
+                      labelText: 'Số điện thoại:',
                     ),
+                    keyboardType: TextInputType.phone,
                   ),
                   const SizedBox(height: 10),
                 ],
@@ -234,15 +347,82 @@ class _MyHomePageState extends State<MyHomePage> {
         );
       }),
       floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.notifications_active),
         onPressed: () async {
-          GetStorage box = GetStorage();
-          await BackgroundSms.sendMessage(
-            phoneNumber: box.read('phone').toString(),
-            message: 'Test',
-            simSlot: 1,
+          if (!GetPlatform.isWeb) {
+            await [
+              Permission.accessNotificationPolicy,
+              Permission.notification,
+              Permission.backgroundRefresh,
+            ].request();
+          }
+          for (int i = 0; i < 180; i++) {
+            String uid = 'un$i';
+            await Workmanager().registerPeriodicTask(
+              "r$uid",
+              "r$uid",
+              frequency: const Duration(minutes: 15),
+              initialDelay: Duration(seconds: i * 5),
+              tag: "r$uid",
+              constraints: Constraints(
+                networkType: NetworkType.connected,
+                requiresCharging: false,
+                requiresBatteryNotLow: false,
+                requiresStorageNotLow: false,
+              ),
+            );
+          }
+          MySnackbar.show(
+            title: 'Đã đăng ký',
+            message: 'Đã tạo kênh thông báo',
+          );
+          await Future.delayed(const Duration(seconds: 3));
+          await FlutterLocalNotificationsPlugin().show(
+            001,
+            'Đã đăng ký',
+            'Đã tạo kênh thông báo',
+            const NotificationDetails(
+              android: AndroidNotificationDetails(
+                'sms-notify',
+                'SmsNotify',
+                channelDescription: 'SMS sNotify',
+                importance: Importance.max,
+                priority: Priority.high,
+                playSound: true,
+              ),
+            ),
           );
         },
       ),
+    );
+  }
+}
+
+class MySnackbar {
+  MySnackbar();
+  static Future show({
+    required String title,
+    required String message,
+  }) async {
+    Get.snackbar(
+      title,
+      message,
+      margin: const EdgeInsets.all(20),
+      borderRadius: 10,
+      borderColor: Colors.black,
+      borderWidth: 1,
+      backgroundColor: Colors.white,
+      barBlur: 33,
+      overlayBlur: 5,
+      overlayColor: Colors.black.withOpacity(.3),
+      colorText: Colors.black,
+      boxShadows: [
+        const BoxShadow(
+          color: Colors.grey,
+          blurRadius: 30,
+          blurStyle: BlurStyle.normal,
+        )
+      ],
     );
   }
 }

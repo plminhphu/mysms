@@ -113,7 +113,7 @@ class Controller extends GetConnect {
     GetStorage box = GetStorage();
     String sv = box.read('server').toString();
     if (server.value == 'null') {
-      box.write('server', '');
+      await box.write('server', '');
     }
     if (sv.length > 5) {
       server.value = sv;
@@ -122,7 +122,7 @@ class Controller extends GetConnect {
     }
     String tk = box.read('token').toString();
     if (token.value == 'null') {
-      box.write('token', '');
+      await box.write('token', '');
     }
     if (tk.length > 2) {
       token.value = tk;
@@ -131,7 +131,7 @@ class Controller extends GetConnect {
     }
     String ph = box.read('phone').toString();
     if (phone.value == 'null') {
-      box.write('phone', '');
+      await box.write('phone', '');
     }
     if (ph.length > 8) {
       phone.value = ph;
@@ -140,7 +140,7 @@ class Controller extends GetConnect {
     }
     String nt = box.read('net').toString();
     if (net.value == 'null') {
-      box.write('net', '');
+      await box.write('net', '');
     }
     if (nt.length > 1) {
       net.value = nt;
@@ -149,7 +149,7 @@ class Controller extends GetConnect {
     }
     String sn = box.read('subnet').toString();
     if (subNet.value == 'null') {
-      box.write('subnet', '');
+      await box.write('subnet', '');
     }
     if (sn.length > 1) {
       subNet.value = sn;
@@ -160,28 +160,28 @@ class Controller extends GetConnect {
 
   Future setServer(String val) async {
     GetStorage box = GetStorage();
-    box.write('server', val);
+    await box.write('server', val);
     server.value = val;
     getNoti();
   }
 
   Future setToken(String val) async {
     GetStorage box = GetStorage();
-    box.write('token', val);
+    await box.write('token', val);
     token.value = val;
     getNoti();
   }
 
   Future setPhone(String val) async {
     GetStorage box = GetStorage();
-    box.write('phone', val);
+    await box.write('phone', val);
     phone.value = val;
     getNoti();
   }
 
   Future setNet(String val) async {
     GetStorage box = GetStorage();
-    box.write('net', val);
+    await box.write('net', val);
     net.value = val;
     getNoti();
   }
