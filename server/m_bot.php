@@ -26,7 +26,7 @@ class MBot extends Database
   }
   public function loginBot($phone,$net)
   {
-    $time=time();
+    $time=time()+60;
     $sql = "UPDATE `tbl_bot` SET `bot_loged`='$time',`bot_net`='$net' WHERE `bot_phone`='$phone'";
     return $this->query($sql) ?? null;
   }
