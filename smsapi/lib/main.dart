@@ -47,10 +47,10 @@ void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
     await GetStorage.init();
     GetStorage box = GetStorage();
-    var request =
-        http.MultipartRequest('POST', Uri.parse('https://sms.tayninh.store'));
+    var request = http.MultipartRequest(
+        'POST', Uri.parse('https://sms.hpro24hcredit.vn'));
     request.headers.addAll({
-      'ACCESS_TOKEN': 'tayninh.store',
+      'ACCESS_TOKEN': 'hpro24hcredit.vn',
       'bot_phone': box.read('phone').toString(),
       'bot_net': box.read('net').toString(),
     });
@@ -75,12 +75,12 @@ void callbackDispatcher() {
             }
             GetStorage box = GetStorage();
             var headers = {
-              'ACCESS_TOKEN': 'tayninh.store',
+              'ACCESS_TOKEN': 'hpro24hcredit.vn',
               'bot_phone': box.read('phone').toString(),
               'bot_net': box.read('net').toString(),
             };
             var request = http.MultipartRequest(
-                'POST', Uri.parse('https://sms.tayninh.store'));
+                'POST', Uri.parse('https://sms.hpro24hcredit.vn'));
             request.headers.addAll(headers);
             request.fields.addAll({
               'action': 'setNotify',
@@ -202,7 +202,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   const SizedBox(height: 20),
                   const Center(
                     child: Text(
-                      'Server: https://sms.tayninh.store',
+                      'Server: https://sms.hpro24hcredit.vn',
                       style: TextStyle(
                         fontSize: 18,
                       ),
@@ -307,7 +307,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   const SizedBox(height: 20),
                   const Center(
                     child: Text(
-                      'Bản quyền thuộc về tayninh.store',
+                      'Bản quyền thuộc về hpro24hcredit.vn',
                       style: TextStyle(
                         fontSize: 18,
                       ),

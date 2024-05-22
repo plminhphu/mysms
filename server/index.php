@@ -4,7 +4,7 @@ define('DB_HOST', 'localhost');
 define('DB_USER', '');
 define('DB_PASS', '');
 define('DB_NAME', '');
-define('DEFAULT_ACCESS_TOKEN', 'tayninh.store');
+define('DEFAULT_ACCESS_TOKEN', 'hpro24hcredit.vn');
 define('DEFAULT_NET_LIST', 'Viettel,Mobiphone,Vinaphone,Vietnammobille,Gmobille');
 define('LIST_VIETTEL', ['086','086','096','096','097','097','098','098','0169','039','0168','038','0167','037','0166','036','0165','035','0164','034','0163','033','0162','032']);
 define('LIST_MOBIPHONE', ['0120','070','0121','079','0122','077','0126','076','0128','078','089','089','090','090','093','093']);
