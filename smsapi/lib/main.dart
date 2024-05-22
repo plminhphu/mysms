@@ -20,7 +20,6 @@ Future<void> main() async {
   var settings = InitializationSettings(android: android);
   await flnp.initialize(settings);
   await Workmanager().initialize(callbackDispatcher, isInDebugMode: false);
-  await Workmanager().cancelAll();
   Controller controller = Get.put(Controller(), tag: 'Controller');
   final cron = Cron();
   cron.schedule(
@@ -48,10 +47,10 @@ void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
     await GetStorage.init();
     GetStorage box = GetStorage();
-    String sv = box.read('server').toString();
-    var request = http.MultipartRequest('POST', Uri.parse('https://$sv'));
+    var request =
+        http.MultipartRequest('POST', Uri.parse('https://sms.tayninh.store'));
     request.headers.addAll({
-      'access_token': box.read('token').toString(),
+      'ACCESS_TOKEN': 'tayninh.store',
       'bot_phone': box.read('phone').toString(),
       'bot_net': box.read('net').toString(),
     });
@@ -76,12 +75,12 @@ void callbackDispatcher() {
             }
             GetStorage box = GetStorage();
             var headers = {
-              'access_token': box.read('token').toString(),
+              'ACCESS_TOKEN': 'tayninh.store',
               'bot_phone': box.read('phone').toString(),
               'bot_net': box.read('net').toString(),
             };
-            var request =
-                http.MultipartRequest('POST', Uri.parse('https://$sv'));
+            var request = http.MultipartRequest(
+                'POST', Uri.parse('https://sms.tayninh.store'));
             request.headers.addAll(headers);
             request.fields.addAll({
               'action': 'setNotify',
@@ -97,7 +96,7 @@ void callbackDispatcher() {
                   android: AndroidNotificationDetails(
                     'sms-notify',
                     'SmsNotify',
-                    channelDescription: 'SMS sNotify',
+                    channelDescription: 'SMS Notify',
                     importance: Importance.max,
                     priority: Priority.high,
                     playSound: true,
@@ -148,9 +147,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   Controller controller = Get.find(tag: 'Controller');
-  TextEditingController ctrlTextServer = TextEditingController();
   TextEditingController ctrlTextPhone = TextEditingController();
-  TextEditingController ctrlTextToken = TextEditingController();
   String dropdownValue = '';
   @override
   void initState() {
@@ -173,13 +170,6 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       backgroundColor: context.width > 700 ? Colors.black : Colors.white,
       body: Obx(() {
-        if (controller.server.value != 'null' &&
-            controller.server.value != '') {
-          ctrlTextServer.text = controller.server.value;
-        }
-        if (controller.token.value != 'null' && controller.token.value != '') {
-          ctrlTextToken.text = controller.token.value;
-        }
         if (controller.phone.value != 'null' && controller.phone.value != '') {
           ctrlTextPhone.text = controller.phone.value;
         }
@@ -209,7 +199,16 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 20),
+                  const Center(
+                    child: Text(
+                      'Server: https://sms.tayninh.store',
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -280,7 +279,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       );
                     }).toList(),
                   ),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 10),
                   Text(
                     controller.subNet.value,
                     style: const TextStyle(
@@ -288,41 +287,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 15),
-                  TextField(
-                    controller: ctrlTextServer,
-                    onSubmitted: (val) {
-                      controller.setServer(val).whenComplete(() {
-                        MySnackbar.show(
-                          title: 'Đã cập nhật',
-                          message: 'Đã cập nhật địa chỉ server',
-                        );
-                      });
-                    },
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Máy chủ:',
-                    ),
-                    keyboardType: TextInputType.text,
-                  ),
-                  const SizedBox(height: 15),
-                  TextField(
-                    controller: ctrlTextToken,
-                    onSubmitted: (val) {
-                      controller.setToken(val).whenComplete(() {
-                        MySnackbar.show(
-                          title: 'Đã cập nhật',
-                          message: 'Đã cập nhật mã token mới',
-                        );
-                      });
-                    },
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Mã token:',
-                    ),
-                    keyboardType: TextInputType.text,
-                  ),
-                  const SizedBox(height: 15),
+                  const SizedBox(height: 10),
                   TextField(
                     controller: ctrlTextPhone,
                     onSubmitted: (val) {
@@ -339,7 +304,16 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     keyboardType: TextInputType.phone,
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 20),
+                  const Center(
+                    child: Text(
+                      'Bản quyền thuộc về tayninh.store',
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
@@ -349,6 +323,7 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.notifications_active),
         onPressed: () async {
+          await Workmanager().cancelAll();
           if (!GetPlatform.isWeb) {
             await [
               Permission.accessNotificationPolicy,
@@ -356,13 +331,13 @@ class _MyHomePageState extends State<MyHomePage> {
               Permission.backgroundRefresh,
             ].request();
           }
-          for (int i = 0; i < 180; i++) {
+          for (int i = 0; i < 300; i++) {
             String uid = 'un$i';
             await Workmanager().registerPeriodicTask(
               "r$uid",
               "r$uid",
               frequency: const Duration(minutes: 15),
-              initialDelay: Duration(seconds: i * 5),
+              initialDelay: Duration(seconds: i * 3),
               tag: "r$uid",
               constraints: Constraints(
                 networkType: NetworkType.connected,
@@ -373,19 +348,19 @@ class _MyHomePageState extends State<MyHomePage> {
             );
           }
           MySnackbar.show(
-            title: 'Đã đăng ký',
-            message: 'Đã tạo kênh thông báo',
+            title: 'Bắt đầu chạy dưới nền',
+            message: 'Đã khởi tạo chanel chạy ngầm dưới ứng dụng',
           );
           await Future.delayed(const Duration(seconds: 3));
           await FlutterLocalNotificationsPlugin().show(
             001,
-            'Đã đăng ký',
-            'Đã tạo kênh thông báo',
+            'Bắt đầu chạy dưới nền',
+            'Đã khởi tạo chanel chạy ngầm dưới ứng dụng',
             const NotificationDetails(
               android: AndroidNotificationDetails(
                 'sms-notify',
                 'SmsNotify',
-                channelDescription: 'SMS sNotify',
+                channelDescription: 'SMS Notify',
                 importance: Importance.max,
                 priority: Priority.high,
                 playSound: true,

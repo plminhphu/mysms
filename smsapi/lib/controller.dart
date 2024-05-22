@@ -10,8 +10,8 @@ class Controller extends GetConnect {
   RxInt timePM = 3.obs;
   RxBool stt = false.obs;
   RxInt sttCode = 0.obs;
-  RxString server = ''.obs;
-  RxString token = ''.obs;
+  String server = 'https://sms.tayninh.store';
+  String token = 'tayninh.store';
   RxString phone = ''.obs;
   RxString net = ''.obs;
   RxString subNet = ''.obs;
@@ -36,15 +36,14 @@ class Controller extends GetConnect {
   }
 
   Future<dynamic> getNoti() async {
-    if (server.value.length > 5) {
+    if (server.length > 5) {
       GetStorage box = GetStorage();
       var headers = {
-        'access_token': box.read('token').toString(),
+        'access_token': token,
         'bot_phone': box.read('phone').toString(),
         'bot_net': box.read('net').toString(),
       };
-      var request =
-          http.MultipartRequest('POST', Uri.parse('https://${server.value}'));
+      var request = http.MultipartRequest('POST', Uri.parse(server));
       request.headers.addAll(headers);
       request.fields.addAll({'action': 'checkNotify'});
       http.StreamedResponse response = await request.send();
@@ -80,12 +79,11 @@ class Controller extends GetConnect {
         }
         GetStorage box = GetStorage();
         var headers = {
-          'access_token': box.read('token').toString(),
+          'access_token': token,
           'bot_phone': box.read('phone').toString(),
           'bot_net': box.read('net').toString(),
         };
-        var request =
-            http.MultipartRequest('POST', Uri.parse('https://${server.value}'));
+        var request = http.MultipartRequest('POST', Uri.parse(server));
         request.headers.addAll(headers);
         request.fields.addAll({
           'action': 'setNotify',
@@ -97,38 +95,8 @@ class Controller extends GetConnect {
     });
   }
 
-  Future<void> sendTele(
-      {required String bot,
-      required String chat_id,
-      required String text}) async {
-    var request = http.MultipartRequest(
-        'POST',
-        Uri.parse(
-            'https://api.telegram.org/bot$bot/sendMessage?chat_id=$chat_id'));
-    request.fields.addAll({'text': text});
-    await request.send();
-  }
-
   Future checkServer() async {
     GetStorage box = GetStorage();
-    String sv = box.read('server').toString();
-    if (server.value == 'null') {
-      await box.write('server', '');
-    }
-    if (sv.length > 5) {
-      server.value = sv;
-    } else {
-      stt.value = false;
-    }
-    String tk = box.read('token').toString();
-    if (token.value == 'null') {
-      await box.write('token', '');
-    }
-    if (tk.length > 2) {
-      token.value = tk;
-    } else {
-      stt.value = false;
-    }
     String ph = box.read('phone').toString();
     if (phone.value == 'null') {
       await box.write('phone', '');
@@ -156,20 +124,6 @@ class Controller extends GetConnect {
     } else {
       stt.value = false;
     }
-  }
-
-  Future setServer(String val) async {
-    GetStorage box = GetStorage();
-    await box.write('server', val);
-    server.value = val;
-    getNoti();
-  }
-
-  Future setToken(String val) async {
-    GetStorage box = GetStorage();
-    await box.write('token', val);
-    token.value = val;
-    getNoti();
   }
 
   Future setPhone(String val) async {

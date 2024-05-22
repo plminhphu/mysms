@@ -1,12 +1,10 @@
 <?php
 
 define('DB_HOST', 'localhost');
-define('DB_USER', 'vkccpjijhosting_sms');
-define('DB_PASS', 'L531HXD5YYQT');
-define('DB_NAME', 'vkccpjijhosting_sms');
-// define('OS_TELE_TOKEN', '5714870448:AAF69g6JU84H3A26sFrDfO0w3Ym5N1DpKNw');
-// define('OS_TELE_ID_ROOM', '-833602910');
-define('DEFAULT_ACCESS_TOKEN', 'plminhphu');
+define('DB_USER', '');
+define('DB_PASS', '');
+define('DB_NAME', '');
+define('DEFAULT_ACCESS_TOKEN', 'tayninh.store');
 define('DEFAULT_NET_LIST', 'Viettel,Mobiphone,Vinaphone,Vietnammobille,Gmobille');
 define('LIST_VIETTEL', ['086','086','096','096','097','097','098','098','0169','039','0168','038','0167','037','0166','036','0165','035','0164','034','0163','033','0162','032']);
 define('LIST_MOBIPHONE', ['0120','070','0121','079','0122','077','0126','076','0128','078','089','089','090','090','093','093']);
@@ -58,8 +56,6 @@ if($ACCESS_TOKEN==DEFAULT_ACCESS_TOKEN){
 
 
   }else if(@$_POST['action']=='checkNotify'){ 
-    // $stdRes->botTele=OS_TELE_TOKEN;
-    // $stdRes->chatId=OS_TELE_ID_ROOM;
     $stdRes->netList=DEFAULT_NET_LIST;
     $BOT_PHONE = @$_SERVER['HTTP_BOT_PHONE']??null;
     $BOT_NET = @$_SERVER['HTTP_BOT_NET']??null;
@@ -73,6 +69,9 @@ if($ACCESS_TOKEN==DEFAULT_ACCESS_TOKEN){
     } else if (strlen($BOT_PHONE)>=10){
       @$Mbot->createBot(@$BOT_PHONE,$BOT_NET) ?? null;
       $stdRes->net=$BOT_NET;
+    } else{
+      header("HTTP/1.1 300");
+      $stdRes->mess='false';
     }
     include_once("m_notify.php");
     $Notify = new Notify();
@@ -179,7 +178,4 @@ function subNetList($net){
   return $sub;
 }
 
-
 echo json_encode($stdRes);exit;
-
-
