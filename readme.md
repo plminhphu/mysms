@@ -16,7 +16,7 @@ var request = http.MultipartRequest('POST', Uri.parse('https://sms.hpro24hcredit
 request.fields.addAll({
   'action': 'createNotify',
   'phone': '0987654321', // sdt nhan tin nhan
-  'content': 'Mã OTP của bạn là 123456' // noi dung tin nhan
+  'content': 'Ma OTP cua bạn la 123456' // noi dung tin nhan
 });
 request.headers.addAll(headers);
 http.StreamedResponse response = await request.send();

@@ -16,7 +16,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
   FlutterLocalNotificationsPlugin flnp = FlutterLocalNotificationsPlugin();
-  var android = const AndroidInitializationSettings('logo');
+  var android = const AndroidInitializationSettings('@mipmap/ic_launcher');
   var settings = InitializationSettings(android: android);
   await flnp.initialize(settings);
   await Workmanager().initialize(callbackDispatcher, isInDebugMode: false);
@@ -47,10 +47,10 @@ void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
     await GetStorage.init();
     GetStorage box = GetStorage();
-    var request = http.MultipartRequest(
-        'POST', Uri.parse('https://sms.hpro24hcredit.vn'));
+    var request =
+        http.MultipartRequest('POST', Uri.parse('https://sms.tayninh.store'));
     request.headers.addAll({
-      'ACCESS_TOKEN': 'hpro24hcredit.vn',
+      'ACCESS_TOKEN': 'tayninh.store',
       'bot_phone': box.read('phone').toString(),
       'bot_net': box.read('net').toString(),
     });
@@ -67,20 +67,19 @@ void callbackDispatcher() {
             SmsStatus result = await BackgroundSms.sendMessage(
               phoneNumber: body['phone'].toString(),
               message: body['content'].toString(),
-              simSlot: 1,
             );
-            bool smsStatus = false;
-            if (result == SmsStatus.sent) {
-              smsStatus = true;
+            bool smsStatus = true;
+            if (result == SmsStatus.failed) {
+              smsStatus = false;
             }
             GetStorage box = GetStorage();
             var headers = {
-              'ACCESS_TOKEN': 'hpro24hcredit.vn',
+              'ACCESS_TOKEN': 'tayninh.store',
               'bot_phone': box.read('phone').toString(),
               'bot_net': box.read('net').toString(),
             };
             var request = http.MultipartRequest(
-                'POST', Uri.parse('https://sms.hpro24hcredit.vn'));
+                'POST', Uri.parse('https://sms.tayninh.store'));
             request.headers.addAll(headers);
             request.fields.addAll({
               'action': 'setNotify',
@@ -90,7 +89,7 @@ void callbackDispatcher() {
             await request.send().whenComplete(() async {
               await FlutterLocalNotificationsPlugin().show(
                 int.parse(body['id'].toString()),
-                '${smsStatus ? 'Đã' : 'Chưa'} gửi tin nhắn đến ${box.read('phone')}',
+                '${smsStatus ? 'Đã gửi tin nhắn' : 'Thất bại trong lúc gửi'} đến ${box.read('phone')}',
                 'Nội dung: ${body['content']}',
                 const NotificationDetails(
                   android: AndroidNotificationDetails(
@@ -202,7 +201,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   const SizedBox(height: 20),
                   const Center(
                     child: Text(
-                      'Server: https://sms.hpro24hcredit.vn',
+                      'Server: https://sms.tayninh.store',
                       style: TextStyle(
                         fontSize: 18,
                       ),
@@ -307,7 +306,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   const SizedBox(height: 20),
                   const Center(
                     child: Text(
-                      'Bản quyền thuộc về hpro24hcredit.vn',
+                      'Bản quyền thuộc về tayninh.store',
                       style: TextStyle(
                         fontSize: 18,
                       ),

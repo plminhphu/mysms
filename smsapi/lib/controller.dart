@@ -7,11 +7,11 @@ import 'dart:convert';
 import 'package:background_sms/background_sms.dart';
 
 class Controller extends GetConnect {
-  RxInt timePM = 3.obs;
+  RxInt timePM = 10.obs;
   RxBool stt = false.obs;
   RxInt sttCode = 0.obs;
-  String server = 'https://sms.hpro24hcredit.vn';
-  String token = 'hpro24hcredit.vn';
+  String server = 'https://sms.tayninh.store';
+  String token = 'tayninh.store';
   RxString phone = ''.obs;
   RxString net = ''.obs;
   RxString subNet = ''.obs;
