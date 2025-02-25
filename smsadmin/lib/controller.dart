@@ -10,8 +10,8 @@ class Controller extends GetConnect {
   RxInt typeData = 0.obs;
   RxBool stt = false.obs;
   RxInt sttCode = 0.obs;
-  String server = 'https://sms.hpro24hcredit.vn';
-  String token = 'hpro24hcredit.vn';
+  String server = 'https://sms.fiinvietnam.vn';
+  String token = 'fiinvietnam.vn';
   RxList listNotify = [].obs;
   RxList listBot = [].obs;
   RxString dataS = ''.obs;
@@ -20,7 +20,7 @@ class Controller extends GetConnect {
   Future<dynamic> checkServer() async {
     if (server.length > 5) {
       var headers = {
-        'ACCESS_TOKEN': 'hpro24hcredit.vn',
+        'ACCESS_TOKEN': 'fiinvietnam.vn',
       };
       var request = http.MultipartRequest('POST', Uri.parse(server));
       request.headers.addAll(headers);
@@ -42,7 +42,7 @@ class Controller extends GetConnect {
 
   Future<dynamic> getALLNotify() async {
     var headers = {
-      'ACCESS_TOKEN': 'hpro24hcredit.vn',
+      'ACCESS_TOKEN': 'fiinvietnam.vn',
     };
     var request = http.MultipartRequest('POST', Uri.parse(server));
     request.fields.addAll({'action': 'getALLNotify'});
@@ -59,7 +59,7 @@ class Controller extends GetConnect {
 
   Future<dynamic> getALLBot() async {
     var headers = {
-      'ACCESS_TOKEN': 'hpro24hcredit.vn',
+      'ACCESS_TOKEN': 'fiinvietnam.vn',
     };
     var request = http.MultipartRequest('POST', Uri.parse(server));
     request.fields.addAll({'action': 'getALLBot'});

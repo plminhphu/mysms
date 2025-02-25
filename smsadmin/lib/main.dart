@@ -32,10 +32,10 @@ void callbackDispatcher() {
     GetStorage box = GetStorage();
     box.remove('notify');
     var headers = {
-      'ACCESS_TOKEN': 'hpro24hcredit.vn',
+      'ACCESS_TOKEN': 'fiinvietnam.vn',
     };
-    var request = http.MultipartRequest(
-        'POST', Uri.parse('https://sms.hpro24hcredit.vn'));
+    var request =
+        http.MultipartRequest('POST', Uri.parse('https://sms.fiinvietnam.vn'));
     request.fields.addAll({'action': 'getLastNotify'});
     request.headers.addAll(headers);
     http.StreamedResponse response = await request.send();
@@ -125,7 +125,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   const SizedBox(height: 20),
                   const Center(
                     child: Text(
-                      'Server: https://sms.hpro24hcredit.vn',
+                      'Server: https://sms.fiinvietnam.vn',
                       style: TextStyle(
                         fontSize: 18,
                       ),
@@ -221,7 +221,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   const SizedBox(height: 20),
                   const Center(
                     child: Text(
-                      'Bản quyền thuộc về hpro24hcredit.vn',
+                      'Bản quyền thuộc về fiinvietnam.vn',
                       style: TextStyle(
                         fontSize: 18,
                       ),
