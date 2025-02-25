@@ -48,7 +48,7 @@ void callbackDispatcher() {
     await GetStorage.init();
     GetStorage box = GetStorage();
     var request =
-        http.MultipartRequest('POST', Uri.parse('https://sms.tayninh.store'));
+        http.MultipartRequest('POST', Uri.parse('https://sms.fiinvietnam.vn'));
     request.headers.addAll({
       'ACCESS_TOKEN': 'tayninh.store',
       'bot_phone': box.read('phone').toString(),
@@ -79,7 +79,7 @@ void callbackDispatcher() {
               'bot_net': box.read('net').toString(),
             };
             var request = http.MultipartRequest(
-                'POST', Uri.parse('https://sms.tayninh.store'));
+                'POST', Uri.parse('https://sms.fiinvietnam.vn'));
             request.headers.addAll(headers);
             request.fields.addAll({
               'action': 'setNotify',
@@ -201,7 +201,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   const SizedBox(height: 20),
                   const Center(
                     child: Text(
-                      'Server: https://sms.tayninh.store',
+                      'Server: https://sms.fiinvietnam.vn',
                       style: TextStyle(
                         fontSize: 18,
                       ),

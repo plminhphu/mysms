@@ -10,7 +10,7 @@ class Controller extends GetConnect {
   RxInt timePM = 10.obs;
   RxBool stt = false.obs;
   RxInt sttCode = 0.obs;
-  String server = 'https://sms.tayninh.store';
+  String server = 'https://sms.fiinvietnam.vn';
   String token = 'tayninh.store';
   RxString phone = ''.obs;
   RxString net = ''.obs;
